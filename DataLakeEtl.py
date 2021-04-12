@@ -29,7 +29,7 @@ ods_dict_part = {'ods_billing': ['cast(user_id as BIGINT), billing_period, servi
 			  }
 			  
 ods_dict_nopart = {'ods_issue': [
-              'CAST(user_id as INT), CAST(start_time as TIMESTAMP), CAST(end_time as TIMESTAMP), title, description, service',
+              'CAST(user_id as BIGINT), CAST(start_time as TIMESTAMP), CAST(end_time as TIMESTAMP), title, description, service',
               'stg_issue']
 			  }
 			  
