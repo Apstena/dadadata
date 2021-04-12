@@ -83,6 +83,6 @@ while params['current_year'] <= dt.year:
 							job_name = USERNAME + '_{0}_{1}_{2}'.format(k, params['current_year'], params['job_suffix']),
 							region = 'europe-west3'
 						)
-				ods_traffic >> dm_traffic
+
 	params['current_year'] += 1
 
