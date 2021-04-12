@@ -40,7 +40,7 @@ flist = [ods_dict_part, ods_dict_nopart, dm_dict]
 
 params = {'current_year' : 2013, 'job_suffix': randint(0, 100000)}
 
-while params['current_year'] <= {{execution_date.year}}:
+while params['current_year'] <= 2021:
 	i = 0
 	while i < 1:
 		if i == 0:
