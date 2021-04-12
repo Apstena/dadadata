@@ -21,7 +21,7 @@ dag = DAG(
 ods_dict_part = {'ods_billing': ['cast(user_id as BIGINT), billing_period, service, tariff, CAST(sum as FLOAT), CAST(created_at as TIMESTAMP)',
                           'stg_billing', 'created_at'],
           'ods_payment': [
-              'cast(user_id as BIGINT), pay_doc_type, CAST(pay_doc_num as BIGINT), account, phone, billing_period, CAST(pay_date as TIMESTAMP), CAST(sum as FLOAT)',
+              'cast(user_id as BIGINT), pay_doc, CAST(pay_doc_num as BIGINT), account, phone, billing_period, CAST(pay_date as TIMESTAMP), CAST(sum as FLOAT)',
               'stg_payment', 'pay_date'],
           'ods_traffic': [
               'cast(user_id as BIGINT), CAST(CAST(`timestamp` as BIGINT) as TIMESTAMP), device_id, device_ip_addr, CAST(bytes_sent as BIGINT), CAST(bytes_received as BIGINT)',
@@ -29,7 +29,7 @@ ods_dict_part = {'ods_billing': ['cast(user_id as BIGINT), billing_period, servi
 			  }
 			  
 ods_dict_nopart = {'ods_issue': [
-              'CAST(user_id as BIGINT), CAST(start_time as TIMESTAMP), CAST(end_time as TIMESTAMP), title, description, service',
+              'CAST(user_id as BIGINT), CAST(start_date as TIMESTAMP), CAST(end_time as TIMESTAMP), title, description, service',
               'stg_issue']
 			  }
 			  
