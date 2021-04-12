@@ -81,5 +81,5 @@ while params['current_year'] <= 2021:
 							job_name = USERNAME + '_{0}_{1}_{2}'.format(k, params['current_year'], params['job_suffix']),
 							region = 'europe-west3'
 						)
-				lvl0_proc >> lvl2_proc
+				lvl0_proc >> lvl1_proc >> lvl2_proc
 	params['current_year'] += 1
