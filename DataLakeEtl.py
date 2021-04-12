@@ -36,7 +36,7 @@ ods_dict_nopart = {'ods_issue': [
 dm_dict = {'dm_traffic' : ['user_id, MAX(bytes_received), MIN(bytes_received), AVG(bytes_received)', 'ods_traffic', 'year']
 			}		  
 
-flist = [ods_dict_part, ods_dict_nopart, dm_dict]
+flist = [ods_dict_nopart, ods_dict_part, dm_dict]
 
 params = {'current_year' : 2013, 'job_suffix': randint(0, 100000)}
 
@@ -50,9 +50,8 @@ while params['current_year'] <= dt.year:
 				lvl0_proc = DataProcHiveOperator(
 					task_id = k,
 					dag = dag,
-					query = """INSERT OVERWRITE TABLE adubinsky.{3} PARTITION (year={4})
-					SELECT {0} FROM adubinsky.{1} WHERE year({2}) = {4};""".format(ods_dict_part[k][0], ods_dict_part[k][1],
-																										ods_dict_part[k][2], k, params['current_year']),
+					query = """INSERT OVERWRITE TABLE adubinsky.{2}
+					SELECT {0} FROM adubinsky.{1} WHERE 1 = 1;""".format(ods_dict_nopart[k][0], ods_dict_nopart[k][1], k),
 					cluster_name = 'cluster-dataproc',
 					job_name = USERNAME + '_{0}_{1}_{2}'.format(k, params['current_year'], params['job_suffix']),
 					region = 'europe-west3'
@@ -62,12 +61,13 @@ while params['current_year'] <= dt.year:
 				for k in flist[i]:
 					lvl1_proc = DataProcHiveOperator(
 						task_id = k,
-						dag = dag,
-						query = """INSERT OVERWRITE TABLE adubinsky.{2}
-						SELECT {0} FROM adubinsky.{1} WHERE 1 = 1;""".format(ods_dict_nopart[k][0], ods_dict_nopart[k][1], k),
-						cluster_name = 'cluster-dataproc',
-						job_name = USERNAME + '_{0}_{1}_{2}'.format(k, params['current_year'], params['job_suffix']),
-						region = 'europe-west3'
+                        dag = dag,
+                        query = """INSERT OVERWRITE TABLE adubinsky.{3} PARTITION (year={4})
+                        SELECT {0} FROM adubinsky.{1} WHERE year({2}) = {4};""".format(ods_dict_part[k][0], ods_dict_part[k][1],
+                                                                                                            ods_dict_part[k][2], k, params['current_year']),
+                        cluster_name = 'cluster-dataproc',
+                        job_name = USERNAME + '_{0}_{1}_{2}'.format(k, params['current_year'], params['job_suffix']),
+                        region = 'europe-west3'
 					)
 				i += 1
 				if i == 2:
@@ -83,5 +83,5 @@ while params['current_year'] <= dt.year:
 							job_name = USERNAME + '_{0}_{1}_{2}'.format(k, params['current_year'], params['job_suffix']),
 							region = 'europe-west3'
 						)
-				lvl0_proc >> lvl1_proc >> lvl2_proc
+				lvl1_proc >> lvl2_proc
 	params['current_year'] += 1
