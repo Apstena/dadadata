@@ -47,7 +47,7 @@ while params['current_year'] <= dt.year:
 	while i < 1:
 		if i == 0:
 			for k in flist[i]:
-				lvl0_proc = DataProcHiveOperator(
+				k = DataProcHiveOperator(
 					task_id = k,
 					dag = dag,
 					query = """INSERT OVERWRITE TABLE adubinsky.{3} PARTITION (year={4})
@@ -60,7 +60,7 @@ while params['current_year'] <= dt.year:
 			i += 1
 			if i == 1:
 				for k in flist[i]:
-					lvl1_proc = DataProcHiveOperator(
+					k = DataProcHiveOperator(
 						task_id = k,
 						dag = dag,
 						query = """INSERT OVERWRITE TABLE adubinsky.{2}
@@ -72,7 +72,7 @@ while params['current_year'] <= dt.year:
 				i += 1
 				if i == 2:
 					for k in flist[i]:
-						lvl2_proc = DataProcHiveOperator(
+						k = DataProcHiveOperator(
 							task_id = k,
 							dag = dag,
 							query="""INSERT OVERWRITE TABLE adubinsky.{3} PARTITION (year={4})
@@ -83,6 +83,6 @@ while params['current_year'] <= dt.year:
 							job_name = USERNAME + '_{0}_{1}_{2}'.format(k, params['current_year'], params['job_suffix']),
 							region = 'europe-west3'
 						)
-				lvl0_proc >> lvl2_proc
+				ods_traffic >> dm_traffic
 	params['current_year'] += 1
 
