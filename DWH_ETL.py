@@ -25,7 +25,7 @@ ods_payment_trunc = PostgresOperator(
     # postgres_conn_id="postgres_default",
     sql="""
       alter table adubinsky.ods_payment truncate PARTITION {{execution_date.year+execution_date.month}}";
-    """.format('p')
+    """
     )
 
 ods_payment = PostgresOperator(
