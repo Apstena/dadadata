@@ -20,7 +20,7 @@ dag = DAG(
 )
 
 ods_payment_trunc = PostgresOperator(
-    task_id="ods_payment",
+    task_id="ods_payment_trunc",
     dag=dag,
     # postgres_conn_id="postgres_default",
     sql="""
