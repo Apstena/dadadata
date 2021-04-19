@@ -15,7 +15,6 @@ default_args = {
 dag = DAG(
     USERNAME + '_dwh_etl',
     depends_on_past = True,
-    wait_for_downstream = True,
     default_args = default_args,
     description = 'Data Lake ETL tasks',
     schedule_interval = "0 0 1 * *",
