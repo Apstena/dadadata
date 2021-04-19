@@ -9,8 +9,8 @@ USERNAME = 'adubinsky'
 
 default_args = {
     'owner': USERNAME,
-    'depends_on_past' : True
-     'wait_for_downstream' : True
+    'depends_on_past' : True,
+     'wait_for_downstream' : True,
     'start_date': datetime(2013, 1, 1, 0, 0, 0)
 }
 
