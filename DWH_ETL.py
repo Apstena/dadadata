@@ -58,3 +58,5 @@ ods_payment = PostgresOperator(
         where pay_date between "{{ execution_date.strftime("%Y-%m-%d")}}"::TIMESTAMP  and "{{ execution_date.strftime("%Y-%m-%d")}}":TIMESTAMP  + interval '1 month' - interval '1 second';
     """
 )
+
+ods_payment_trunc>>ods_payment
