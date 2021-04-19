@@ -19,6 +19,15 @@ dag = DAG(
     schedule_interval = "0 0 1 * *",
 )
 
+ods_payment_trunc = PostgresOperator(
+    task_id="ods_payment",
+    dag=dag,
+    # postgres_conn_id="postgres_default",
+    sql="""
+      alter table adubinsky.ods_payment truncate PARTITION "{{p + execution_date.year + execution_date.month}}";
+    """
+    )
+
 ods_payment = PostgresOperator(
     task_id="ods_payment",
     dag=dag,
@@ -46,6 +55,6 @@ ods_payment = PostgresOperator(
           sum ,
           src_name
           from adubinsky.v_stg_ods_payment
-        where pay_date between "{{ execution_date}}"::TIMESTAMP  and "{{ execution_date}}":TIMESTAMP  + interval '1 month' - interval '1 second';
+        where pay_date between "{{ execution_date.strftime("%Y-%m-%d")}}"::TIMESTAMP  and "{{ execution_date.strftime("%Y-%m-%d")}}":TIMESTAMP  + interval '1 month' - interval '1 second';
     """
 )
