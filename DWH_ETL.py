@@ -204,7 +204,7 @@ dds_hub_account = PostgresOperator(
 all_hubs_loaded = DummyOperator(task_id="all_hubs_loaded", dag=dag)
 
 all_ods_loaded >>  dds_hub_payment >> all_hubs_loaded
-all_ods_loaded >>  dds_hub_billing_period >> all_hubs_loaded
+all_ods_loaded >>  dds_hub_user  >> all_hubs_loaded
 all_ods_loaded >>  dds_hub_payment >> all_hubs_loaded
 all_ods_loaded >>  dds_hub_account >> all_hubs_loaded
 
