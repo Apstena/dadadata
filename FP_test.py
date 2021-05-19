@@ -26,7 +26,7 @@ ods_payment_trunc = PostgresOperator(
     dag=dag,
     # postgres_conn_id="postgres_default",
     sql="""
-      alter table adubinsky.fp_ods_payment truncate PARTITION "p+{{execution_date.strftime('%Y')}}";
+      alter table adubinsky.fp_ods_payment truncate PARTITION "p{{execution_date.strftime('%Y')}}";
     """
     )
 #Заполнение очищенной на прошлом шаге партиции
