@@ -46,7 +46,7 @@ ods_payment = PostgresOperator(
           pay_date  , 
           sum ,
           src_name,
-          load_dt,
+          load_dttm,
           tech_dt
         )
         select  user_id , 
@@ -58,7 +58,7 @@ ods_payment = PostgresOperator(
           pay_date  , 
           sum ,
           src_name,
-          load_dt,
+          load_dttm,
           '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP as tech_dt
           
           from adubinsky.fp_v_stg_ods_payment
