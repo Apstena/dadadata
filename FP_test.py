@@ -67,7 +67,7 @@ ods_payment = PostgresOperator(
           sum ,
           src_name,
           load_dttm,
-          '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP as tech_dt
+          '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP as tech_dt,
           row_number() over (partition by pay_doc_num order by pay_date desc) as rn
           from adubinsky.fp_v_stg_ods_payment
         where pay_date between '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  and '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  + interval '1 year' - interval '1 second'
