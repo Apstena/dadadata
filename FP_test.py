@@ -20,22 +20,14 @@ dag = DAG(
     description = 'DWH ETL tasks',
     schedule_interval = "0 0 1 1 *",
 )
-#очистка партции на ODS
-ods_payment_trunc = PostgresOperator(
-    task_id="ods_payment_trunc",
-    dag=dag,
-    # postgres_conn_id="postgres_default",
-    sql="""
-      alter table adubinsky.fp_ods_payment truncate PARTITION "p{{execution_date.strftime('%Y')}}";
-    """
-    )
-#Заполнение очищенной на прошлом шаге партиции
+#Очистка и заполнение партиций ODS фактов очищенной на прошлом шаге партиции
 ods_payment = PostgresOperator(
     task_id="ods_payment",
     dag=dag,
     # postgres_conn_id="postgres_default",
     sql="""
-                insert into adubinsky.fp_ods_payment
+         alter table adubinsky.fp_ods_payment truncate PARTITION "p{{execution_date.strftime('%Y')}}";
+         Insert into adubinsky.fp_ods_payment
         (
           user_id , 
           pay_doc_type , 
@@ -65,5 +57,3 @@ ods_payment = PostgresOperator(
         where pay_date between '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  and '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  + interval '1 year' - interval '1 second';
     """
 )
-
-ods_payment_trunc>>ods_payment
