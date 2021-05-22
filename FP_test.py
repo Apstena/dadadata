@@ -259,6 +259,7 @@ ods_mdm_user = PostgresOperator(
           del_ind
          )
          select  
+         user_id,
          legal_type , 
           district  , 
           registered_at , 
@@ -271,12 +272,12 @@ ods_mdm_user = PostgresOperator(
           '2999-12-31 00:00:00'::timestamp as exp_dttm ,
           1 as del_ind
           from adubinsky.fp_ods_mdm_user m
-         where not exists (select 1 from adubinsky.fp_v_mdm_ods_mdm_user v where v.id=m.user_id)
+         where not exists (select 1 from adubinsky.fp_v_mdm_ods_mdm_user v where v.user_id=m.user_id)
          and m.exp_dttm='2999-12-31 00:00:00'::timestamp ;
          
          update adubinsky.fp_ods_mdm_user m
          set exp_dttm = '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP - interval '1 second'
-         where not exists (select 1 from adubinsky.fp_v_mdm_ods_mdm_user v where v.id=m.user_id)
+         where not exists (select 1 from adubinsky.fp_v_mdm_ods_mdm_user v where v.user_id=m.user_id)
          and m.exp_dttm='2999-12-31 00:00:00'::timestamp and del_ind = 0;
          
           insert into  adubinsky.fp_ods_mdm_user
@@ -295,7 +296,7 @@ ods_mdm_user = PostgresOperator(
           del_ind
          )
          select  
-         id,
+         user_id,
          legal_type , 
           district  , 
           registered_at , 
@@ -308,13 +309,13 @@ ods_mdm_user = PostgresOperator(
           '2999-12-31 00:00:00'::timestamp as exp_dttm ,
           0 as del_ind
           from adubinsky.fp_v_mdm_ods_mdm_user v
-          where exists (select 1 from adubinsky.fp_ods_mdm_user v where v.user_ud=m.user_id and (m.hashsum!=v.hashsum or m.del_ind=1)
+          where exists (select 1 from adubinsky.fp_ods_mdm_user v where v.user_id=m.user_id and (m.hashsum!=v.hashsum or m.del_ind=1)
                         and m.exp_dttm='2999-12-31 00:00:00'::timestamp)
           ;
 
           update adubinsky.fp_ods_mdm_user m
          set exp_dttm = '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP - interval '1 second'
-         where exists (select 1 from adubinsky.fp_v_mdm_ods_mdm_user v where v.id=m.user_id and (m.hashsum!=v.hashsum or m.del_ind=1))
+         where exists (select 1 from adubinsky.fp_v_mdm_ods_mdm_user v where v.user_id=m.user_id and (m.hashsum!=v.hashsum or m.del_ind=1))
          and m.exp_dttm='2999-12-31 00:00:00'::timestamp;
     """
 )
