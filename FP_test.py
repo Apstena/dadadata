@@ -318,5 +318,38 @@ ods_mdm_user = PostgresOperator(
          set exp_dttm = '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP - interval '1 second'
          where exists (select 1 from adubinsky.fp_v_mdm_ods_mdm_user v where v.user_id=m.user_id and (m.hashsum!=v.hashsum or m.del_ind=1))
          and m.exp_dttm='2999-12-31 00:00:00'::timestamp;
+         
+         
+         insert into  adubinsky.fp_ods_mdm_user
+         (
+         user_id , 
+          legal_type , 
+          district  , 
+          registered_at , 
+          billing_mode , 
+          is_vip , 
+          src_name ,
+          load_dttm ,
+          hashsum ,
+          eff_dttm ,
+          exp_dttm ,
+          del_ind
+         )
+         select  
+         user_id,
+         legal_type , 
+          district  , 
+          registered_at , 
+          billing_mode , 
+          is_vip , 
+          src_name ,
+          load_dttm ,
+          hashsum ,
+          '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP as eff_dttm ,
+          '2999-12-31 00:00:00'::timestamp as exp_dttm ,
+          0 as del_ind
+          from adubinsky.fp_v_mdm_ods_mdm_user v
+          where not exists (select 1 from adubinsky.fp_ods_mdm_user m where v.user_id=m.user_id and m.exp_dttm='2999-12-31 00:00:00'::timestamp)
+          ;
     """
 )
