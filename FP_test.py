@@ -367,7 +367,7 @@ dds_hub_segment = PostgresOperator(
     task_id="dds_hub_segment",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_segment
 		(
 		segment_key,
@@ -387,13 +387,13 @@ dds_hub_segment = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_segment h where v.segment_key=h.segment_key
 		);
-    """"""
+    """"
 )
 dds_hub_distr = PostgresOperator(
     task_id="dds_hub_distr",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_distr
 		(
 		distr_key,
@@ -413,13 +413,13 @@ dds_hub_distr = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_distr h where v.distr_key=h.distr_key
 		);
-    """"""
+    """"
 )
 dds_hub_reg_per = PostgresOperator(
     task_id="dds_hub_reg_per",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_reg_per
 		(
 		reg_per_key,
@@ -439,13 +439,13 @@ dds_hub_reg_per = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_reg_per h where v.reg_per_key=h.reg_per_key
 		);
-    """"""
+    """"
 )
 dds_hub_billing_mode = PostgresOperator(
     task_id="dds_hub_billing_mode",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_billing_mode
 		(
 		billing_mode_key,
@@ -465,13 +465,13 @@ dds_hub_billing_mode = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_billing_mode h where v.billing_mode_key=h.billing_mode_key
 		);
-    """"""
+    """"
 )
 dds_hub_users = PostgresOperator(
     task_id="dds_hub_users",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_users
 		(
 		user_key,
@@ -491,13 +491,13 @@ dds_hub_users = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_users h where v.user_key=h.user_key
 		);
-    """"""
+    """"
 )
 dds_hub_payment = PostgresOperator(
     task_id="dds_hub_payment",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_payment
 		(
 		payment_key,
@@ -517,13 +517,13 @@ dds_hub_payment = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_payment h where v.payment_key=h.payment_key
 		);
-    """"""
+    """"
 )
 dds_hub_issue = PostgresOperator(
     task_id="dds_hub_issue",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_issue
 		(
 		issue_key,
@@ -543,13 +543,13 @@ dds_hub_issue = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_issue h where v.issue_key=h.issue_key
 		);
-    """"""
+    """"
 )
 dds_hub_billing = PostgresOperator(
     task_id="dds_hub_billing",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_billing
 		(
 		billing_key,
@@ -569,13 +569,13 @@ dds_hub_billing = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_billing h where v.billing_key=h.billing_key
 		);
-    """"""
+    """"
 )
 dds_hub_traffic = PostgresOperator(
     task_id="dds_hub_traffic",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_traffic
 		(
 		traffic_key,
@@ -595,13 +595,13 @@ dds_hub_traffic = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_traffic h where v.traffic_key=h.traffic_key
 		);
-    """"""
+    """"
 )
 dds_hub_device = PostgresOperator(
     task_id="dds_hub_device",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_device
 		(
 		device_key,
@@ -621,13 +621,13 @@ dds_hub_device = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_device h where v.device_key=h.device_key
 		);
-    """"""
+    """"
 )
 dds_hub_tariff = PostgresOperator(
     task_id="dds_hub_tariff",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_tariff
 		(
 		tariff_key,
@@ -647,13 +647,13 @@ dds_hub_tariff = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_tariff h where v.tariff_key=h.tariff_key
 		);
-    """"""
+    """"
 )
 dds_hub_service = PostgresOperator(
     task_id="dds_hub_service",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_service
 		(
 		service_key,
@@ -673,13 +673,13 @@ dds_hub_service = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_service h where v.service_key=h.service_key
 		);
-    """"""
+    """"
 )
 dds_hub_billing_per = PostgresOperator(
     task_id="dds_hub_billing_per",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_billing_per
 		(
 		billing_per_key,
@@ -699,13 +699,13 @@ dds_hub_billing_per = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_billing_per h where v.billing_per_key=h.billing_per_key
 		);
-    """"""
+    """"
 )
 dds_hub_payment_doc_type = PostgresOperator(
     task_id="dds_hub_payment_doc_type",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""""
+    sql=""""
 		insert into adubinsky.fp_dds_hub_payment_doc_type
 		(
 		payment_doc_type_key,
@@ -725,5 +725,5 @@ dds_hub_payment_doc_type = PostgresOperator(
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_payment_doc_type h where v.payment_doc_type_key=h.payment_doc_type_key
 		);
-    """"""
+    """"
 )
