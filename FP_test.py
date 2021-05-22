@@ -386,8 +386,9 @@ dds_hub_segment = PostgresOperator(
 		where exp_dttm='2999-12-31 00:00:00'
 		and not exists (
 		  select 1 from adubinsky.fp_dds_hub_segment h where v.segment_key=h.segment_key
-		);
-    """"
+		)
+		;
+    """
 )
 dds_hub_distr = PostgresOperator(
     task_id="dds_hub_distr",
