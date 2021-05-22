@@ -119,7 +119,7 @@ ods_billing = PostgresOperator(
           src_name,
           load_dttm,
           '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP as tech_dt,
-          row_numer() over (partition by user_id,billing_period,service,tariff order by created_at desc) as rn
+          row_number() over (partition by user_id,billing_period,service,tariff order by created_at desc) as rn
           from adubinsky.fp_v_stg_ods_billing
         where created_at between '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  and '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  + interval '1 year' - interval '1 second'
         )pre;
