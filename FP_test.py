@@ -136,7 +136,7 @@ ods_traffic = PostgresOperator(
          Insert into adubinsky.fp_ods_traffic
         (
           user_id , 
-          timestamp , 
+          timestamp_src , 
           device_id  , 
           device_ip_addr , 
           bytes_sent , 
@@ -189,7 +189,7 @@ ods_issue = PostgresOperator(
          from adubinsky.fp_v_stg_ods_issue n
          where n.hashsum=o.hashsum \
          and o.tech_dt<'{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP
-         and greatest(n.start_time,n.coalesce(end_time,'1900-01-01'::timestamp) between '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  
+         and greatest(n.start_time,coalesce(n.end_time,'1900-01-01'::timestamp) between '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  
             and '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  + interval '1 year' - interval '1 second';
          Insert into adubinsky.fp_ods_issue
         (
