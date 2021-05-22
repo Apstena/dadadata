@@ -741,3 +741,19 @@ dds_hub_payment_doc_type = PostgresOperator(
 		;
     """
 )
+
+
+all_ods_loaded >>  dds_hub_segment
+all_ods_loaded >>  dds_hub_distr
+all_ods_loaded >>  dds_hub_reg_per
+all_ods_loaded >>  dds_hub_billing_mode
+all_ods_loaded >>  dds_hub_users
+all_ods_loaded >>  dds_hub_payment
+all_ods_loaded >>  dds_hub_issue
+all_ods_loaded >>  dds_hub_billing
+all_ods_loaded >>  dds_hub_traffic
+all_ods_loaded >>  dds_hub_device
+all_ods_loaded >>  dds_hub_tariff
+all_ods_loaded >>  dds_hub_service
+all_ods_loaded >>  dds_hub_billing_per
+all_ods_loaded >>  dds_hub_payment_doc_type
