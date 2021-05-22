@@ -218,6 +218,7 @@ ods_issue = PostgresOperator(
           case when rn=1 then 0
           else 1 end as del_ind, 
           hashsum
+          from
         (select  
           user_id , 
           start_time , 
