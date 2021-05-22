@@ -55,7 +55,7 @@ dds_hub_distr = PostgresOperator(
     task_id="dds_hub_distr",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
-    sql=""""
+    sql="""
 		insert into adubinsky.fp_dds_hub_distr
 		(
 		distr_key,
