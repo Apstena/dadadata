@@ -308,7 +308,7 @@ ods_mdm_user = PostgresOperator(
           '2999-12-31 00:00:00'::timestamp as exp_dttm ,
           0 as del_ind
           from adubinsky.fp_v_mdm_ods_mdm_user v
-          where xists (select 1 from adubinsky.fp_ods_mdm_user v where v.user_ud=m.user_id and (m.hashsum!=v.hashsum or m.del_ind=1)
+          where exists (select 1 from adubinsky.fp_ods_mdm_user v where v.user_ud=m.user_id and (m.hashsum!=v.hashsum or m.del_ind=1)
                         and m.exp_dttm='2999-12-31 00:00:00'::timestamp)
           ;
 
