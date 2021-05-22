@@ -364,7 +364,7 @@ ods_issue >> all_ods_loaded
 ods_mdm_user >> all_ods_loaded
 
 dds_hub_segment = PostgresOperator(
-    task_id="dds_hub_segment"",
+    task_id="dds_hub_segment",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -390,7 +390,7 @@ dds_hub_segment = PostgresOperator(
     """"""
 )
 dds_hub_distr = PostgresOperator(
-    task_id="dds_hub_distr"",
+    task_id="dds_hub_distr",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -416,7 +416,7 @@ dds_hub_distr = PostgresOperator(
     """"""
 )
 dds_hub_reg_per = PostgresOperator(
-    task_id="dds_hub_reg_per"",
+    task_id="dds_hub_reg_per",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -442,7 +442,7 @@ dds_hub_reg_per = PostgresOperator(
     """"""
 )
 dds_hub_billing_mode = PostgresOperator(
-    task_id="dds_hub_billing_mode"",
+    task_id="dds_hub_billing_mode",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -468,7 +468,7 @@ dds_hub_billing_mode = PostgresOperator(
     """"""
 )
 dds_hub_users = PostgresOperator(
-    task_id="dds_hub_users"",
+    task_id="dds_hub_users",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -494,7 +494,7 @@ dds_hub_users = PostgresOperator(
     """"""
 )
 dds_hub_payment = PostgresOperator(
-    task_id="dds_hub_payment"",
+    task_id="dds_hub_payment",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -520,7 +520,7 @@ dds_hub_payment = PostgresOperator(
     """"""
 )
 dds_hub_issue = PostgresOperator(
-    task_id="dds_hub_issue"",
+    task_id="dds_hub_issue",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -546,7 +546,7 @@ dds_hub_issue = PostgresOperator(
     """"""
 )
 dds_hub_billing = PostgresOperator(
-    task_id="dds_hub_billing"",
+    task_id="dds_hub_billing",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -572,7 +572,7 @@ dds_hub_billing = PostgresOperator(
     """"""
 )
 dds_hub_traffic = PostgresOperator(
-    task_id="dds_hub_traffic"",
+    task_id="dds_hub_traffic",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -598,7 +598,7 @@ dds_hub_traffic = PostgresOperator(
     """"""
 )
 dds_hub_device = PostgresOperator(
-    task_id="dds_hub_device"",
+    task_id="dds_hub_device",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -624,7 +624,7 @@ dds_hub_device = PostgresOperator(
     """"""
 )
 dds_hub_tariff = PostgresOperator(
-    task_id="dds_hub_tariff"",
+    task_id="dds_hub_tariff",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -650,7 +650,7 @@ dds_hub_tariff = PostgresOperator(
     """"""
 )
 dds_hub_service = PostgresOperator(
-    task_id="dds_hub_service"",
+    task_id="dds_hub_service",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -676,7 +676,7 @@ dds_hub_service = PostgresOperator(
     """"""
 )
 dds_hub_billing_per = PostgresOperator(
-    task_id="dds_hub_billing_per"",
+    task_id="dds_hub_billing_per",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
@@ -702,7 +702,7 @@ dds_hub_billing_per = PostgresOperator(
     """"""
 )
 dds_hub_payment_doc_type = PostgresOperator(
-    task_id="dds_hub_payment_doc_type"",
+    task_id="dds_hub_payment_doc_type",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql=""""""
