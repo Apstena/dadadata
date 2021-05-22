@@ -232,7 +232,7 @@ ods_issue = PostgresOperator(
           hashsum,
           row_number() over (partition by hashsum order by end_time desc) rn
           from adubinsky.fp_v_stg_ods_issue
-        where greatest(start_time,coalesce(end_time,'1900-01-01'::timestamp) between '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  and '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  + interval '1 year' - interval '1 second'
+        where greatest(start_time,coalesce(end_time,'1900-01-01'::timestamp)) between '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  and '{{ execution_date.strftime("%Y-%m-%d")}}'::TIMESTAMP  + interval '1 year' - interval '1 second'
         )pre
         ;
     """
