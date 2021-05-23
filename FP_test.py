@@ -2342,7 +2342,7 @@ issue as
 (
 select 
 link_issue_users.user_key,
-"{{execution_date.strftime('%Y')}}"::int as billing_year,
+'{{execution_date.strftime('%Y')}}'::int as billing_year,
 count(distinct link_issue_users.issue_key)  as issue_cnt
  from 
 adubinsky.fp_dds_link_issue_users link_issue_users 
@@ -2355,7 +2355,7 @@ traffic as
 (
 select 
 link_traffic_users.user_key,
-"{{execution_date.strftime('%Y')}}"::int as billing_year,
+'{{execution_date.strftime('%Y')}}'::int as billing_year,
 sum(traffic_in_b+traffic_out_b)/1024/1024/1024/1024 as traffic_pb
  from 
 adubinsky.fp_dds_link_traffic_users link_traffic_users 
