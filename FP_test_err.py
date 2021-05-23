@@ -1334,6 +1334,15 @@ where '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp between v.eff_dttm a
 and not exists (select 1 from adubinsky.fp_dds_sat_user_mdm s where v.user_key=s.user_key and s.exp_dt='2999-12-31 00:00:00');
     """
 )
+all_ods_loaded >>  dds_sat_reg_per
+all_ods_loaded >>  dds_sat_user_prop
+all_ods_loaded >>  dds_sat_payment_prop
+all_ods_loaded >>  dds_sat_issue_prop
+all_ods_loaded >>  dds_sat_billing_prop
+all_ods_loaded >>  dds_sat_traffic_prop
+all_ods_loaded >>  dds_sat_device
+all_ods_loaded >>  dds_sat_billing_per
+all_ods_loaded >>  dds_sat_user_mdm
 
 #Блок загрузки линков DDS
 
@@ -1727,18 +1736,18 @@ and l.eff_dt<=v.tech_dt
 ;
     """
 )
-dds_link_billing_per_billing = PostgresOperator(
-    task_id="dds_link_billing_per_billing",
+dds_link_tariff_billing = PostgresOperator(
+    task_id="dds_link_tariff_billing",
     dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql="""
-update adubinsky.fp_dds_link_billing_per_billing l
+update adubinsky.fp_dds_link_tariff_billing l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_billing v
 where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
 and v.billing_key=l.billing_key and (v.tariff_key!=l.tariff_key);
 
-insert into adubinsky.fp_dds_link_billing_per_billing
+insert into adubinsky.fp_dds_link_tariff_billing
 (
 billing_key,
 tariff_key,
@@ -1754,8 +1763,42 @@ tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_billing v
 where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
-and not exists (select 1 from adubinsky.fp_dds_link_billing_per_billing l
+and not exists (select 1 from adubinsky.fp_dds_link_tariff_billing l
 where l.billing_key=v.billing_key and l.tariff_key=v.tariff_key
+and l.eff_dt<=v.tech_dt
+)
+;
+    """
+)
+dds_link_service_billing = PostgresOperator(
+    task_id="dds_link_service_billing",
+    dag=dag,
+    # postgres_conn_id=""postgres_default"",
+    sql="""
+update adubinsky.fp_dds_link_service_billing l
+set exp_dt= v.tech_dt - interval '1 second'
+from adubinsky.fp_v_ods_billing v
+where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+and v.billing_key=l.billing_key and (v.service_key!=l.service_key);
+
+insert into adubinsky.fp_dds_link_service_billing
+(
+billing_key,
+service_key,
+load_dttm,
+eff_dt,
+exp_dt
+)
+select 
+billing_key,
+service_key,
+load_dttm,
+tech_dt as eff_dt,
+'2999-12-31 00:00:00' as exp_dt
+from adubinsky.fp_v_ods_billing v
+where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+and not exists (select 1 from adubinsky.fp_dds_link_service_billing l
+where l.billing_key=v.billing_key and l.service_key=v.service_key
 and l.eff_dt<=v.tech_dt
 )
 ;
@@ -1870,3 +1913,19 @@ and v.eff_dttm=l.eff_dt
 );
     """
 )
+
+
+all_ods_loaded >>  dds_link_payment_users
+all_ods_loaded >>  dds_link_issue_users
+all_ods_loaded >>  dds_link_billing_users
+all_ods_loaded >>  dds_link_traffic_users
+all_ods_loaded >>  dds_link_device_users
+all_ods_loaded >>  dds_link_tariff_users
+all_ods_loaded >>  dds_link_service_users
+all_ods_loaded >>  dds_link_billing_per_billing
+all_ods_loaded >>  dds_link_payment_doc_type_payment
+all_ods_loaded >>  dds_link_tariff_billing
+all_ods_loaded >>  dds_link_service_billing
+all_ods_loaded >>  dds_link_billing_per_payment
+all_ods_loaded >>  dds_link_service_issue
+all_ods_loaded >>  dds_link_mdm_user_user
