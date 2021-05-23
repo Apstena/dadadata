@@ -2314,7 +2314,7 @@ payment as
 select 
 link_payment_users.user_key,
 sat_billing_per.billing_year, 
-sum(sat_payment_prop.payment_sum_rub::numeric(38,5)/1000 as payment_sum_rub_th
+sum(sat_payment_prop.payment_sum_rub::numeric(38,5))/1000 as payment_sum_rub_th
  from 
 adubinsky.fp_dds_link_payment_users link_payment_users 
 join adubinsky.fp_dds_hub_payment hub_payment  on hub_payment.payment_key=link_payment_users.payment_key
