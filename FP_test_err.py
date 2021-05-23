@@ -430,14 +430,14 @@ dds_sat_reg_per = PostgresOperator(
 update adubinsky.fp_dds_sat_reg_per s
 set exp_dt = v.eff_dttm - interval '1 second'
 from adubinsky.fp_v_ods_mdm_user v
-where '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
 and v.reg_per_hashsum!=s.hashsum and v.reg_per_key=s.reg_per_key;
 
 update adubinsky.fp_dds_sat_reg_per s
-set exp_dt = '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp - interval '1 second'
+set exp_dt = '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp - interval '1 second'
 where 
 not exists(select 1 from adubinsky.fp_v_ods_mdm_user v where
-'{{ execution_date.strftime("%y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
+'{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
 and v.reg_per_key=s.reg_per_key);
 
 insert into adubinsky.fp_dds_sat_reg_per
@@ -459,7 +459,7 @@ v.eff_dttm,
 v.exp_dttm,
 v.reg_per_hashsum
 from adubinsky.fp_v_ods_mdm_user v
-where '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
 and not exists (select 1 from adubinsky.fp_dds_sat_reg_per s where v.reg_per_key=s.reg_per_key and s.exp_dt='2999-12-31 00:00:00');
     """
 )
@@ -523,7 +523,7 @@ case when
   lag(user_prop_hashsum,1,user_prop_hashsum) over (partition by user_key order by pay_date)!=user_prop_hashsum
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_payment 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -602,7 +602,7 @@ case when
   lag(user_prop_hashsum,1,user_prop_hashsum) over (partition by user_key order by pay_date)!=user_prop_hashsum
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_payment 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -674,7 +674,7 @@ case when
   lag(pay_prop_hashsum,1,pay_prop_hashsum) over (partition by payment_key order by pay_date)!=pay_prop_hashsum
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_payment 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -753,7 +753,7 @@ case when
   lag(pay_prop_hashsum,1,pay_prop_hashsum) over (partition by payment_key order by pay_date)!=pay_prop_hashsum
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_payment 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -773,7 +773,7 @@ dds_sat_issue_prop = PostgresOperator(
 update adubinsky.fp_dds_sat_issue_prop s
 set exp_dt = v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_issue v
-where '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp = v.tech_dt 
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp = v.tech_dt 
 and v.issue_prop_hashsum!=s.hashsum and v.issue_key=s.issue_key;
 
 insert into adubinsky.fp_dds_sat_issue_prop
@@ -799,7 +799,7 @@ v.tech_dt as eff_dttm,
 '2999-12-31 00:00:00'::timestamp as exp_dttm,
 v.issue_prop_hashsum
 from adubinsky.fp_v_ods_issue v
-where '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp = v.tech_dt 
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp = v.tech_dt 
 and not exists (select 1 from adubinsky.fp_dds_sat_issue_prop s where v.issue_key=s.issue_key and s.exp_dt='2999-12-31 00:00:00');
 
     """
@@ -863,7 +863,7 @@ case when
   lag(billing_prop_hashsum,1,billing_prop_hashsum) over (partition by billing_key order by created_at)!=billing_prop_hashsum
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_billing 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -942,7 +942,7 @@ case when
   lag(billing_prop_hashsum,1,billing_prop_hashsum) over (partition by billing_key order by created_at)!=billing_prop_hashsum
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_billing 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -1017,7 +1017,7 @@ case when
   lag(traffic_prop_hashsum,1,traffic_prop_hashsum) over (partition by traffic_key order by traffic_dt)!=traffic_prop_hashsum
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_traffic 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -1103,7 +1103,7 @@ case when
   lag(traffic_prop_hashsum,1,traffic_prop_hashsum) over (partition by traffic_key order by traffic_dt)!=traffic_prop_hashsum
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_traffic 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -1168,7 +1168,7 @@ case when
   lag(device_prop_hashsum,1,device_prop_hashsum) over (partition by device_key order by traffic_dt)!=device_prop_hashsum
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_traffic 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -1240,7 +1240,7 @@ case when
   lag(device_prop_hashsum,1,device_prop_hashsum) over (partition by device_key order by traffic_dt)!=device_prop_hashsum
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_traffic 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -1260,14 +1260,14 @@ dds_sat_billing_per = PostgresOperator(
 update adubinsky.fp_dds_sat_billing_per s
 set exp_dt = v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_billing v
-where '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp = v.tech_dt
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp = v.tech_dt
 and v.billing_per_hashsum!=s.hashsum and v.billing_per_key=s.billing_per_key;
 
 update adubinsky.fp_dds_sat_billing_per s
-set exp_dt = '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp - interval '1 second'
+set exp_dt = '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp - interval '1 second'
 where 
 not exists(select 1 from adubinsky.fp_v_ods_billing v where
-'{{ execution_date.strftime("%y-%m-%d")}}'::timestamp = v.tech_dt
+'{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp = v.tech_dt
 and v.billing_per_key=s.billing_per_key);
 
 insert into adubinsky.fp_dds_sat_billing_per
@@ -1289,7 +1289,7 @@ v.tech_dt as eff_dt,
 '2999-12-31 00:00:00'::timestamp as exp_dttm,
 v.billing_per_hashsum
 from adubinsky.fp_v_ods_billing v
-where '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp = v.tech_dt
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp = v.tech_dt
 and not exists (select 1 from adubinsky.fp_dds_sat_billing_per s where v.billing_per_key=s.billing_per_key and s.exp_dt='2999-12-31 00:00:00');
     """
 )
@@ -1301,14 +1301,14 @@ dds_sat_user_mdm = PostgresOperator(
 update adubinsky.fp_dds_sat_user_mdm s
 set exp_dt = v.eff_dttm - interval '1 second'
 from adubinsky.fp_v_ods_mdm_user v
-where '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
 and v.mdm_user_prop_hashsum!=s.hashsum and v.user_key=s.user_key;
 
 update adubinsky.fp_dds_sat_user_mdm s
-set exp_dt = '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp - interval '1 second'
+set exp_dt = '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp - interval '1 second'
 where 
 not exists(select 1 from adubinsky.fp_v_ods_mdm_user v where
-'{{ execution_date.strftime("%y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
+'{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
 and v.user_key=s.user_key);
 
 insert into adubinsky.fp_dds_sat_user_mdm
@@ -1330,7 +1330,7 @@ v.eff_dttm,
 v.exp_dttm,
 v.mdm_user_prop_hashsum
 from adubinsky.fp_v_ods_mdm_user v
-where '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
 and not exists (select 1 from adubinsky.fp_dds_sat_user_mdm s where v.user_key=s.user_key and s.exp_dt='2999-12-31 00:00:00');
     """
 )
@@ -1354,7 +1354,7 @@ dds_link_payment_users = PostgresOperator(
 update adubinsky.fp_dds_link_payment_users l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_payment v
-where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where v.tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and v.payment_key=l.payment_key and (v.user_key!=l.user_key);
 
 insert into adubinsky.fp_dds_link_payment_users
@@ -1372,7 +1372,7 @@ load_dttm,
 tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_payment v
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and not exists (select 1 from adubinsky.fp_dds_link_payment_users l
 where l.payment_key=v.payment_key and l.user_key=v.user_key
 and l.eff_dt<=v.tech_dt
@@ -1388,7 +1388,7 @@ dds_link_issue_users = PostgresOperator(
 update adubinsky.fp_dds_link_issue_users l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_issue v
-where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where v.tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and v.issue_key=l.issue_key and (v.user_key!=l.user_key);
 
 insert into adubinsky.fp_dds_link_issue_users
@@ -1406,7 +1406,7 @@ load_dttm,
 tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_issue v
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and not exists (select 1 from adubinsky.fp_dds_link_issue_users l
 where l.issue_key=v.issue_key and l.user_key=v.user_key
 and l.eff_dt<=v.tech_dt
@@ -1423,7 +1423,7 @@ dds_link_billing_users = PostgresOperator(
 update adubinsky.fp_dds_link_billing_users l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_billing v
-where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where v.tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and v.billing_key=l.billing_key and (v.user_key!=l.user_key);
 
 insert into adubinsky.fp_dds_link_billing_users
@@ -1441,7 +1441,7 @@ load_dttm,
 tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_billing v
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and not exists (select 1 from adubinsky.fp_dds_link_billing_users l
 where l.billing_key=v.billing_key and l.user_key=v.user_key
 and l.eff_dt<=v.tech_dt
@@ -1457,7 +1457,7 @@ dds_link_traffic_users = PostgresOperator(
 update adubinsky.fp_dds_link_traffic_users l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_traffic v
-where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where v.tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and v.traffic_key=l.traffic_key and (v.user_key!=l.user_key);
 
 insert into adubinsky.fp_dds_link_traffic_users
@@ -1475,7 +1475,7 @@ load_dttm,
 tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_traffic v
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and not exists (select 1 from adubinsky.fp_dds_link_traffic_users l
 where l.traffic_key=v.traffic_key and l.user_key=v.user_key
 and l.eff_dt<=v.tech_dt
@@ -1532,7 +1532,7 @@ case when
   lag(user_key,1,user_key) over (partition by device_key order by traffic_dt)!=user_key
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_traffic 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -1603,7 +1603,7 @@ case when
   lag(user_key,1,user_key) over (partition by device_key order by traffic_dt)!=user_key
   then 1 else 0 end as cng
 from adubinsky.fp_v_ods_traffic 
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 )sq1
 )sq2
 )sq3
@@ -1634,7 +1634,7 @@ insert into adubinsky.fp_dds_link_tariff_users
 		tech_dt as eff_dt,
 		tech_dt+interval '1 year' - interval '1 second' as exp_dt
 		from adubinsky.fp_v_ods_billing v
-		where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+		where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 		and not exists (
 		  select 1 from adubinsky.fp_dds_link_tariff_users l where v.tariff_key=l.tariff_key and v.user_key=l.user_key 
 		)
@@ -1661,7 +1661,7 @@ dds_link_service_users = PostgresOperator(
 		tech_dt as eff_dt,
 		tech_dt+interval '1 year' - interval '1 second' as exp_dt
 		from adubinsky.fp_v_ods_billing v
-		where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+		where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 		and not exists (
 		  select 1 from adubinsky.fp_dds_link_service_users l where v.service_key=l.service_key and v.user_key=l.user_key 
 		)
@@ -1677,7 +1677,7 @@ dds_link_billing_per_billing = PostgresOperator(
 update adubinsky.fp_dds_link_billing_per_billing l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_billing v
-where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where v.tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and v.billing_key=l.billing_key and (v.billing_per_key!=l.billing_per_key);
 
 insert into adubinsky.fp_dds_link_billing_per_billing
@@ -1695,7 +1695,7 @@ load_dttm,
 tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_billing v
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and not exists (select 1 from adubinsky.fp_dds_link_billing_per_billing l
 where l.billing_key=v.billing_key and l.billing_per_key=v.billing_per_key
 and l.eff_dt<=v.tech_dt
@@ -1711,7 +1711,7 @@ dds_link_payment_doc_type_payment = PostgresOperator(
 update adubinsky.fp_dds_link_payment_doc_type_payment l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_payment v
-where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where v.tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and v.payment_key=l.payment_key and (v.payment_doc_type_key!=l.payment_doc_type_key);
 
 insert into adubinsky.fp_dds_link_payment_doc_type_payment
@@ -1729,7 +1729,7 @@ load_dttm,
 tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_payment v
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and not exists (select 1 from adubinsky.fp_dds_link_payment_doc_type_payment l
 where l.payment_key=v.payment_key and l.payment_doc_type_key=v.payment_doc_type_key
 and l.eff_dt<=v.tech_dt
@@ -1745,7 +1745,7 @@ dds_link_tariff_billing = PostgresOperator(
 update adubinsky.fp_dds_link_tariff_billing l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_billing v
-where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where v.tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and v.billing_key=l.billing_key and (v.tariff_key!=l.tariff_key);
 
 insert into adubinsky.fp_dds_link_tariff_billing
@@ -1763,7 +1763,7 @@ load_dttm,
 tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_billing v
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and not exists (select 1 from adubinsky.fp_dds_link_tariff_billing l
 where l.billing_key=v.billing_key and l.tariff_key=v.tariff_key
 and l.eff_dt<=v.tech_dt
@@ -1779,7 +1779,7 @@ dds_link_service_billing = PostgresOperator(
 update adubinsky.fp_dds_link_service_billing l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_billing v
-where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where v.tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and v.billing_key=l.billing_key and (v.service_key!=l.service_key);
 
 insert into adubinsky.fp_dds_link_service_billing
@@ -1797,7 +1797,7 @@ load_dttm,
 tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_billing v
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and not exists (select 1 from adubinsky.fp_dds_link_service_billing l
 where l.billing_key=v.billing_key and l.service_key=v.service_key
 and l.eff_dt<=v.tech_dt
@@ -1813,7 +1813,7 @@ dds_link_billing_per_payment = PostgresOperator(
 update adubinsky.fp_dds_link_billing_per_payment l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_payment v
-where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where v.tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and v.payment_key=l.payment_key and (v.billing_per_key!=l.billing_per_key);
 
 insert into adubinsky.fp_dds_link_billing_per_payment
@@ -1831,7 +1831,7 @@ load_dttm,
 tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_payment v
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and not exists (select 1 from adubinsky.fp_dds_link_billing_per_payment l
 where l.payment_key=v.payment_key and l.billing_per_key=v.billing_per_key
 and l.eff_dt<=v.tech_dt
@@ -1848,7 +1848,7 @@ dds_link_service_issue = PostgresOperator(
 update adubinsky.fp_dds_link_service_issue l
 set exp_dt= v.tech_dt - interval '1 second'
 from adubinsky.fp_v_ods_issue v
-where v.tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where v.tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and v.issue_key=l.issue_key and (v.service_key!=l.service_key);
 
 insert into adubinsky.fp_dds_link_service_issue
@@ -1866,7 +1866,7 @@ load_dttm,
 tech_dt as eff_dt,
 '2999-12-31 00:00:00' as exp_dt
 from adubinsky.fp_v_ods_issue v
-where tech_dt='{{ execution_date.strftime("%y-%m-%d")}}'::timestamp
+where tech_dt='{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp
 and not exists (select 1 from adubinsky.fp_dds_link_service_issue l
 where l.issue_key=v.issue_key and l.service_key=v.service_key
 and l.eff_dt<=v.tech_dt
@@ -1908,7 +1908,7 @@ load_dttm,
 eff_dttm,
 exp_dttm
 from adubinsky.fp_v_ods_mdm_user v
-where '{{ execution_date.strftime("%y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp between v.eff_dttm and v.exp_dttm
 and not exists (select 1 from adubinsky.fp_dds_link_mdm_user_user l where l.mdm_user_user_key=v.mdm_user_user_key
 and v.eff_dttm=l.eff_dt
 );
