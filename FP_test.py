@@ -1603,13 +1603,6 @@ from adubinsky.fp_v_ods_billing v
 where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp = v.tech_dt
 and v.billing_per_hashsum!=s.hashsum and v.billing_per_key=s.billing_per_key;
 
-update adubinsky.fp_dds_sat_billing_per s
-set exp_dt = '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp - interval '1 second'
-where 
-not exists(select 1 from adubinsky.fp_v_ods_billing v where
-'{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp = v.tech_dt
-and v.billing_per_key=s.billing_per_key);
-
 insert into adubinsky.fp_dds_sat_billing_per
 (
 billing_per_key,
