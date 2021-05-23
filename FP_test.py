@@ -2282,7 +2282,7 @@ insert into adubinsky.fp_dm_tfct_agg_year
   billing_sum_rub_th,
   payment_sum_rub_th,
   issue_cnt,
-  traffic_amount_pb,
+  traffic_amount_gb,
   load_dttm,
   tech_dt
 )
@@ -2292,7 +2292,7 @@ with billing as
 select 
 link_billing_users.user_key,
 sat_billing_per.billing_year, 
-sum(sat_billing_prop.billing_sum_rub)/1000 as billing_sum_rub_th 
+sum(sat_billing_prop.billing_sum_rub::numeric(38,5))/1000 as billing_sum_rub_th 
  from 
 adubinsky.fp_dds_link_billing_users link_billing_users 
 join adubinsky.fp_dds_hub_billing hub_billing  on hub_billing.billing_key=link_billing_users.billing_key
@@ -2314,7 +2314,7 @@ payment as
 select 
 link_payment_users.user_key,
 sat_billing_per.billing_year, 
-sum(sat_payment_prop.payment_sum_rub)/1000 as payment_sum_rub_th
+sum(sat_payment_prop.payment_sum_rub::numeric(38,5)/1000 as payment_sum_rub_th
  from 
 adubinsky.fp_dds_link_payment_users link_payment_users 
 join adubinsky.fp_dds_hub_payment hub_payment  on hub_payment.payment_key=link_payment_users.payment_key
@@ -2349,10 +2349,10 @@ traffic as
 select 
 link_traffic_users.user_key,
 '{{execution_date.strftime('%Y')}}'::int as billing_year,
-sum(traffic_in_b+traffic_out_b)/1024/1024/1024/1024 as traffic_pb
+sum(traffic_in_b::numeric(38,12)+traffic_out_b::numeric(38,12))/1024/1024/1024 as traffic_gb
  from 
 adubinsky.fp_dds_link_traffic_users link_traffic_users 
-join adubinsky.fp_dds_sat_traffic_prop sat_traffic_prop  on sat_traffic_prop.traffic_key=sat_traffic_prop.traffic_key
+join adubinsky.fp_dds_sat_traffic_prop sat_traffic_prop  on sat_traffic_prop.traffic_key=link_traffic_users.traffic_key
     and sat_traffic_prop.eff_dt  between '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second'
 where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between link_traffic_users.eff_dt and link_traffic_users.exp_dt
 group by link_traffic_users.user_key
@@ -2373,7 +2373,7 @@ is_premial_type,
 sum(billing_sum_rub_th) as billing_sum_rub_th,
 sum(payment_sum_rub_th) as payment_sum_rub_th,
 sum(issue_cnt) as issue_cnt,
-sum(traffic_amount_pb) as traffic_amount_pb,
+sum(traffic_amount_gb) as traffic_amount_gb,
 now() as load_dttm,
 '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp as tech_dt
 from(
@@ -2387,7 +2387,7 @@ sat_user_mdm.premial_type as is_premial_type,
 coalesce(billing.billing_sum_rub_th,0)::numeric(38,2) as billing_sum_rub_th,
 coalesce(payment.payment_sum_rub_th,0)::numeric(38,2) as payment_sum_rub_th,
 coalesce(issue.issue_cnt,0)::numeric(38) as issue_cnt,
-coalesce(traffic.traffic_pb,0)::numeric(38,2)  as traffic_amount_pb
+coalesce(traffic.traffic_gb,0)::numeric(38,2)  as traffic_amount_gb
 from adubinsky.fp_dds_hub_users dds_hub_users
 join calendar on 1=1
 left join billing on billing.user_key=dds_hub_users.user_key and calendar.billing_year=billing.billing_year
