@@ -2270,3 +2270,249 @@ all_ods_loaded >>  dds_link_service_billing
 all_ods_loaded >>  dds_link_billing_per_payment
 all_ods_loaded >>  dds_link_service_issue
 all_ods_loaded >>  dds_link_mdm_user_user
+
+
+dm_tfct_agg_year = PostgresOperator(
+    task_id="dm_tfct_agg_year",
+    dag=dag,
+    # postgres_conn_id=""postgres_default"",
+    sql="""
+alter table adubinsky.fp_dm_tfct_agg_year truncate PARTITION "p{{execution_date.strftime('%Y')}}";
+insert into adubinsky.fp_dm_tfct_agg_year
+(
+  year,  
+  segment_key, 
+  distr_key, 
+  billing_mode_key, 
+  reg_per_key, 
+  is_premial_type, 
+  billing_sum_rub_th,
+  payment_sum_rub_th,
+  issue_cnt,
+  traffic_amount_pb,
+  load_dttm,
+  tech_dt
+)
+
+with billing as 
+(
+select 
+link_billing_users.user_key,
+sat_billing_per.billing_year, 
+sum(sat_billing_prop.billing_sum_rub)/1000 as billing_sum_rub_th 
+ from 
+adubinsky.fp_dds_link_billing_users link_billing_users 
+join adubinsky.fp_dds_hub_billing hub_billing  on hub_billing.billing_key=link_billing_users.billing_key
+    and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' >= hub_billing.eff_dt
+join adubinsky.fp_dds_sat_billing_prop sat_billing_prop on sat_billing_prop.billing_key=hub_billing.billing_key
+  --and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between sat_billing_prop.eff_dt and sat_billing_prop.exp_dt
+  and sat_billing_prop.eff_dt between '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second'
+join adubinsky.fp_dds_link_billing_per_billing link_billing_per_billing on link_billing_per_billing.billing_key=hub_billing.billing_key
+  and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between link_billing_per_billing.eff_dt and link_billing_per_billing.exp_dt
+join adubinsky.fp_dds_sat_billing_per sat_billing_per on sat_billing_per.billing_per_key=link_billing_per_billing.billing_per_key
+  and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between sat_billing_per.eff_dt and sat_billing_per.exp_dt
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between link_billing_users.eff_dt and link_billing_users.exp_dt
+group by 
+link_billing_users.user_key,
+sat_billing_per.billing_year
+),
+payment as 
+(
+select 
+link_payment_users.user_key,
+sat_billing_per.billing_year, 
+sum(sat_payment_prop.payment_sum_rub)/1000 as payment_sum_rub_th
+ from 
+adubinsky.fp_dds_link_payment_users link_payment_users 
+join adubinsky.fp_dds_hub_payment hub_payment  on hub_payment.payment_key=link_payment_users.payment_key
+    and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' >= hub_payment.eff_dt
+join adubinsky.fp_dds_sat_payment_prop sat_payment_prop on sat_payment_prop.payment_key=hub_payment.payment_key
+  --and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between sat_payment_prop.eff_dt and sat_payment_prop.exp_dt
+  and sat_payment_prop.eff_dt between  '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp and  '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second'
+join adubinsky.fp_dds_link_billing_per_payment link_billing_per_payment on link_billing_per_payment.payment_key=hub_payment.payment_key
+  and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between link_billing_per_payment.eff_dt and link_billing_per_payment.exp_dt
+join adubinsky.fp_dds_sat_billing_per sat_billing_per on sat_billing_per.billing_per_key=link_billing_per_payment.billing_per_key
+  and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between sat_billing_per.eff_dt and sat_billing_per.exp_dt
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between link_payment_users.eff_dt and link_payment_users.exp_dt
+group by 
+link_payment_users.user_key,
+sat_billing_per.billing_year
+),
+issue as
+(
+select 
+link_issue_users.user_key,
+"p{{execution_date.strftime('%Y')}}"::int as billing_year,
+count(distinct link_issue_users.issue_key)  as issue_cnt
+ from 
+adubinsky.fp_dds_link_issue_users link_issue_users 
+join adubinsky.fp_dds_sat_issue_prop sat_issue_prop  on sat_issue_prop.issue_key=link_issue_users.issue_key
+    and sat_issue_prop.issue_start_dttm  between '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second'
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between link_issue_users.eff_dt and link_issue_users.exp_dt
+group by link_issue_users.user_key
+),
+traffic as
+(
+select 
+link_traffic_users.user_key,
+"p{{execution_date.strftime('%Y')}}"::int as billing_year,
+sum(traffic_in_b+traffic_out_b)/1024/1024/1024/1024 as traffic_pb
+ from 
+adubinsky.fp_dds_link_traffic_users link_traffic_users 
+join adubinsky.fp_dds_sat_traffic_prop sat_traffic_prop  on sat_traffic_prop.traffic_key=sat_traffic_prop.traffic_key
+    and sat_traffic_prop.eff_dt  between '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second'
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between link_traffic_users.eff_dt and link_traffic_users.exp_dt
+group by link_traffic_users.user_key
+),
+calendar as
+(
+  select 
+  distinct billing_year 
+  from adubinsky.fp_dds_sat_billing_per
+)
+select 
+billing_year,
+segment_key,
+distr_key,
+billing_mode_key,
+reg_per_key,
+is_premial_type,
+sum(billing_sum_rub_th) as billing_sum_rub_th,
+sum(payment_sum_rub_th) as payment_sum_rub_th,
+sum(issue_cnt) as issue_cnt,
+sum(traffic_amount_pb) as traffic_amount_pb,
+now() as load_dttm,
+'{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp as tech_dt
+from(
+select 
+coalesce(billing.billing_year,payment.billing_year,issue.billing_year,traffic.billing_year) as billing_year,
+link_mdm_user_user.segment_key,
+link_mdm_user_user.distr_key,
+link_mdm_user_user.billing_mode_key,
+link_mdm_user_user.reg_per_key,
+sat_user_mdm.premial_type as is_premial_type,
+coalesce(billing.billing_sum_rub_th,0)::numeric(38,2) as billing_sum_rub_th,
+coalesce(payment.payment_sum_rub_th,0)::numeric(38,2) as payment_sum_rub_th,
+coalesce(issue.issue_cnt,0)::numeric(38) as issue_cnt,
+coalesce(traffic.traffic_pb,0)::numeric(38,2)  as traffic_amount_pb
+from adubinsky.fp_dds_hub_users dds_hub_users
+join calendar on 1=1
+left join billing on billing.user_key=dds_hub_users.user_key and calendar.billing_year=billing.billing_year
+left join payment on payment.user_key=dds_hub_users.user_key and calendar.billing_year=payment.billing_year
+left join issue on issue.user_key=dds_hub_users.user_key and calendar.billing_year=issue.billing_year
+left join traffic on traffic.user_key=dds_hub_users.user_key and calendar.billing_year=traffic.billing_year
+join adubinsky.fp_dds_link_mdm_user_user link_mdm_user_user on link_mdm_user_user.user_key=dds_hub_users.user_key
+  and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between link_mdm_user_user.eff_dt and link_mdm_user_user.exp_dt
+join adubinsky.fp_dds_sat_user_mdm sat_user_mdm on sat_user_mdm.user_key=dds_hub_users.user_key
+  and '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' between sat_user_mdm.eff_dt and sat_user_mdm.exp_dt
+where '{{ execution_date.strftime("%Y-%m-%d")}}'::timestamp + interval '1 year' - interval '1 second' >=dds_hub_users.eff_dt
+)sq1
+where billing_year is not null
+group by
+billing_year,
+segment_key,
+distr_key,
+billing_mode_key,
+reg_per_key,
+is_premial_type
+;
+    """
+)
+
+dm_dim_segment = PostgresOperator(
+    task_id="dm_dim_segment",
+    dag=dag,
+    # postgres_conn_id=""postgres_default"",
+    sql="""
+truncate table adubinsky.fp_dm_dim_segment;
+insert into adubinsky.fp_dm_dim_segment
+(
+segment_key,
+segment_name,
+load_dttm
+)
+select segment_key, segment_nkey, now()
+from adubinsky.fp_dds_hub_segment;
+    """
+)
+
+dm_dim_distr = PostgresOperator(
+    task_id="dm_dim_distr",
+    dag=dag,
+    # postgres_conn_id=""postgres_default"",
+    sql="""
+truncate table adubinsky.fp_dm_dim_distr;
+insert into adubinsky.fp_dm_dim_distr
+(
+distr_key,
+distr_name,
+load_dttm
+)
+select distr_key, distr_nkey, now()
+from adubinsky.fp_dds_hub_distr;
+    """
+)
+
+dm_dim_billing_mode = PostgresOperator(
+    task_id="dm_dim_billing_mode",
+    dag=dag,
+    # postgres_conn_id=""postgres_default"",
+    sql="""
+truncate table adubinsky.fp_dm_dim_billing_mode;
+insert into adubinsky.fp_dm_dim_billing_mode
+(
+billing_mode_key,
+billing_mode_name,
+load_dttm
+)
+select billing_mode_key, billing_mode_nkey, now()
+from adubinsky.fp_dds_hub_billing_mode;
+    """
+)
+
+dm_dim_reg_per = PostgresOperator(
+    task_id="dm_dim_reg_per",
+    dag=dag,
+    # postgres_conn_id=""postgres_default"",
+    sql="""
+truncate table adubinsky.fp_dm_dim_reg_per;
+insert into adubinsky.fp_dm_dim_reg_per
+(
+reg_per_key,
+reg_year,
+reg_year_month,
+load_dttm
+)
+select 
+reg_per_key, 
+reg_year,
+reg_year_month, 
+now()
+from adubinsky.fp_dds_sat_reg_per
+where exp_dt='2999-12-31 00:00:00'::timestamp
+;
+    """
+)
+
+dds_link_billing_users  >> dm_tfct_agg_year
+dds_hub_billing  >> dm_tfct_agg_year
+dds_sat_billing_prop  >> dm_tfct_agg_year
+dds_link_billing_per_billing  >> dm_tfct_agg_year
+dds_sat_billing_per  >> dm_tfct_agg_year
+dds_link_payment_users  >> dm_tfct_agg_year
+dds_hub_payment  >> dm_tfct_agg_year
+dds_sat_payment_prop  >> dm_tfct_agg_year
+dds_link_billing_per_payment  >> dm_tfct_agg_year
+dds_sat_billing_per  >> dm_tfct_agg_year
+dds_link_issue_users  >> dm_tfct_agg_year
+dds_sat_issue_prop  >> dm_tfct_agg_year
+dds_link_traffic_users  >> dm_tfct_agg_year
+dds_sat_traffic_prop  >> dm_tfct_agg_year
+dds_sat_billing_per  >> dm_tfct_agg_year
+dds_hub_users  >> dm_tfct_agg_year
+dds_link_mdm_user_user  >> dm_tfct_agg_year
+dds_sat_user_mdm  >> dm_tfct_agg_year
+dds_hub_segment  >> dm_dim_segment
+dds_hub_distr  >> dm_dim_distr
+dds_hub_billing_mode  >> dm_dim_billing_mode
+dds_sat_reg_per  >>  dm_dim_reg_per
