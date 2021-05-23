@@ -1450,7 +1450,8 @@ and l.eff_dt<=v.tech_dt
     """
 )
 dds_link_traffic_users = PostgresOperator(
-    task_id="dds_link_traffic_users"
+    task_id="dds_link_traffic_users",
+    dag=dag,
     # postgres_conn_id=""postgres_default"",
     sql="""
 update adubinsky.fp_dds_link_traffic_users l
