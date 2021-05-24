@@ -2384,10 +2384,10 @@ link_mdm_user_user.distr_key,
 link_mdm_user_user.billing_mode_key,
 link_mdm_user_user.reg_per_key,
 sat_user_mdm.premial_type as is_premial_type,
-coalesce(billing.billing_sum_rub_th,0)::numeric(38,2) as billing_sum_rub_th,
-coalesce(payment.payment_sum_rub_th,0)::numeric(38,2) as payment_sum_rub_th,
+coalesce(billing.billing_sum_rub_th,0)::numeric(38,5) as billing_sum_rub_th,
+coalesce(payment.payment_sum_rub_th,0)::numeric(38,5) as payment_sum_rub_th,
 coalesce(issue.issue_cnt,0)::numeric(38) as issue_cnt,
-coalesce(traffic.traffic_gb,0)::numeric(38,2)  as traffic_amount_gb
+coalesce(traffic.traffic_gb,0)::numeric(38,12)  as traffic_amount_gb
 from adubinsky.fp_dds_hub_users dds_hub_users
 join calendar on 1=1
 left join billing on billing.user_key=dds_hub_users.user_key and calendar.billing_year=billing.billing_year
